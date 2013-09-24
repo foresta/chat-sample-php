@@ -1,0 +1,68 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equic="Content-Script-Type" content="text/javascript" />
+<script type="text/javascript" src="prototype.js"></script>
+<script type="text/javascript">
+	//<![CDATA[
+	//データを読み込む関数
+	function load_data(){
+		$('message').value="";
+		var myajax = new Ajax.PeriodicalUpdater('result','chat.php',
+										{
+											method: 'post',
+											postBody: 'mode=load',
+											frequency: 10
+										});
+	}
+	
+	function post_data(){
+		var name = $F('name');
+		var message = $F('message');
+		
+		var myajax = new Ajax.Request('chat.php',
+									{
+										method: 'post',
+										postBody: 'mode=save&name='+name+
+												  '&message='+message,
+										onComplete: load_data
+									});
+	}
+	
+	function reset_data(){
+		var myajax = new Ajax.Request('chat.php',
+									{
+										method: 'post',
+										postBody: 'mode=reset',
+										onComplete: load_data
+									});
+	}
+	
+	function init(){
+		Event.observe('submit','click',post_data);
+		Event.observe('reset','click',reset_data);
+	//	$('submit').observe('click',post_data);
+		load_data();
+	}
+	
+	Event.observe(window,'load',init);
+
+	//]]>
+</script>
+
+<title>チャットサンプル</title>
+</head>
+<body>
+<center>
+
+投稿者:<input type="text" name="name" id="name" value="" />
+<br>
+内容:::::<input type="text" name="message" id="message" /><br>
+<input type="submit" name="submit" id="submit" value="送信">
+<input type="submit" name="reset" id="reset" value="ログ消去">
+<br>
+<br>
+<p id="result"></p>
+</center>
+</body>
+</html>
